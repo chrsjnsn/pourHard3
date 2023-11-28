@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Water Puzzle Game</title>
+    <style>
+      .container {
+        width: 200px;
+        height: 300px;
+        border: 2px solid #000;
+        position: relative;
+        margin: 20px;
+        /* display: inline-block; */
+        text-align: center;
+      }
+
+      .text {
+        font-size: 48px; /* Set your desired font size */
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(
+          -50%,
+          -50%
+        ); /* Center text vertically and horizontally */
+      }
+
+      .containerFive {
+        width: 300px;
+        height: 400px;
+        border: 2px solid #000;
+        position: relative;
+        margin: 20px;
+        display: inline-block;
+      }
+
+      .water {
+        background-color: lightblue;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 0;
+        transition: height 0.5s;
+      }
+
+      .topRight {
+        position: absolute;
+        top: 0;
+        right: 0;
+      }
+
+      .bottomRight {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+      }
+
+      .sideBySide {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .stackedButtons {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+
+      button {
+        margin: 10px;
+        padding: 5px;
+        font-size: 48px;
+        border: none;
+        border-radius: 5px;
+        background-color: rgba(21, 193, 18, 0.651);
+        cursor: pointer;
+        text-align: center;
+        appearance: none;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="sideBySide">
+      <div>
+        <div class="container" id="container3">
+          <button class="topRight" onclick="fillContainer(3)">🚰</button>
+          <div class="water" id="water3"></div>
+          <div class="text" id="text3">0</div>
+          <button class="bottomRight" onclick="empty(3)">🧽</button>
+        </div>
+      </div>
+
+      <div class="stackedButtons">
+        <button onclick="pour(3, 5)">➡️</button>
+        <button onclick="pour(5, 3)">⬅️</button>
+      </div>
+
+      <div>
+        <div class="containerFive" id="container5">
+          <button class="topRight" onclick="fillContainer(5)">🚰</button>
+          <div class="water" id="water5"></div>
+          <div class="text" id="text5">0</div>
+          <button class="bottomRight" onclick="empty(5)">🧽</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let waterLevel3 = 0;
+      let waterLevel5 = 0;
+
+      function updateWater(container, waterLevel) {
+        const waterElement = document.getElementById(`water${container}`);
+        const containerElement = document.getElementById(
+          `container${container}`
+        );
+        const containerHeight = containerElement.clientHeight;
+        const waterHeight = (waterLevel / container) * containerHeight;
+
+        waterElement.style.height = `${waterHeight}px`;
+
+        // Update the text content
+        const textElement = document.getElementById(`text${container}`);
+        textElement.textContent = waterLevel;
+      }
+
+      function fillContainer(container) {
+        if (container === 3) {
+          waterLevel3 = 3;
+          updateWater(3, waterLevel3);
+        } else if (container === 5) {
+          waterLevel5 = 5;
+          updateWater(5, waterLevel5);
+        }
+      }
+
+      async function pour(source, target) {
+        if (source === 5 && target === 3) {
+          if (waterLevel5 > 0 && waterLevel3 < 3) {
+            const pouredWater = Math.min(3 - waterLevel3, waterLevel5);
+            waterLevel5 -= pouredWater;
+            waterLevel3 += pouredWater;
+
+            await updateWater(3, waterLevel3);
+            await updateWater(5, waterLevel5);
+            // if (waterLevel5 === 4) {
+            //   alert("You win!");
+            // }
+          }
+        } else if (source === 3 && target === 5) {
+          if (waterLevel3 > 0 && waterLevel5 < 5) {
+            const pouredWater = Math.min(5 - waterLevel5, waterLevel3);
+            waterLevel3 -= pouredWater;
+            waterLevel5 += pouredWater;
+
+            updateWater(3, waterLevel3);
+            updateWater(5, waterLevel5);
+          }
+        }
+      }
+
+      function empty(container) {
+        if (container === 3) {
+          waterLevel3 = 0;
+          updateWater(3, waterLevel3);
+        } else if (container === 5) {
+          waterLevel5 = 0;
+          updateWater(5, waterLevel5);
+        }
+      }
+    </script>
+  </body>
+</html>
